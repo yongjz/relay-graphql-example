@@ -61,6 +61,26 @@ var {nodeInterface, nodeField} = nodeDefinitions(
   }
 );
 
+var loginType = new GraphQLObjectType({
+  name: 'Login',
+  description: 'User login',
+  fields: () => ({
+    id: globalIdField('Login'),
+    isLogin: {
+      type: GraphQLBoolean,
+      description: 'is user login?',
+      resolve: (name, password) => {
+        if(name === 'admin' && password === '123456'){
+          return true;
+        } else {
+          return false;
+        }
+      },
+    },
+  }),
+  interfaces: [nodeInterface],
+});
+
 var gameType = new GraphQLObjectType({
   name: 'Game',
   description: 'A treasure search game',
@@ -121,6 +141,20 @@ var queryType = new GraphQLObjectType({
     game: {
       type: gameType,
       resolve: () => getGame(),
+    },
+    login: {
+      type: GraphQLBoolean,
+      args: {
+        name: { type: GraphQLString },
+        password: { type: GraphQLString },
+      },
+      resolve: (_, args) => {
+        if(args.name === 'admin' && args.password === '123456'){
+          return true;
+        } else {
+          return false;
+        }
+      },
     },
   }),
 });
