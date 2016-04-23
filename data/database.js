@@ -45,3 +45,15 @@ export function getHidingSpots() {
 export function getTurnsRemaining() {
   return turnsRemaining;
 }
+
+export class User {}
+export function login(username, password) {
+  var user = new User();
+  user.isLogin = false;
+  user.username = 'guest';
+  if(username === 'admin' && password === '123456') {
+    user.isLogin = true;
+    user.username = 'admin'
+  }
+  return user;
+}

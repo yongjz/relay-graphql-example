@@ -37,6 +37,7 @@ import {
   getHidingSpot,
   getHidingSpots,
   getTurnsRemaining,
+  login,
 } from './database';
 
 var {nodeInterface, nodeField} = nodeDefinitions(
@@ -69,14 +70,13 @@ var loginType = new GraphQLObjectType({
     isLogin: {
       type: GraphQLBoolean,
       description: 'is user login?',
-      resolve: (name, password) => {
-        if(name === 'admin' && password === '123456'){
-          return true;
-        } else {
-          return false;
-        }
-      },
+      resolve: (userInfo) => userInfo.isLogin,
     },
+    username: {
+      type: GraphQLString,
+      description: 'user name',
+      resolve: (userInfo) => userInfo.username,
+    }
   }),
   interfaces: [nodeInterface],
 });
@@ -142,20 +142,6 @@ var queryType = new GraphQLObjectType({
       type: gameType,
       resolve: () => getGame(),
     },
-    login: {
-      type: GraphQLBoolean,
-      args: {
-        name: { type: GraphQLString },
-        password: { type: GraphQLString },
-      },
-      resolve: (_, args) => {
-        if(args.name === 'admin' && args.password === '123456'){
-          return true;
-        } else {
-          return false;
-        }
-      },
-    },
   }),
 });
 
@@ -181,10 +167,34 @@ var CheckHidingSpotForTreasureMutation = mutationWithClientMutationId({
   },
 });
 
+var LoginMutation = mutationWithClientMutationId({
+  name: 'Login',
+  inputFields: {
+    username: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    password: {
+      type: new GraphQLNonNull(GraphQLString)
+    }
+  },
+  outputFields: {
+    userInfo: {
+      type: loginType,
+    },
+  },
+  mutateAndGetPayload: (credentials) => {
+    console.log(credentials);
+    var userInfo = login(credentials.username, credentials.password);
+    console.log(userInfo);
+    return {userInfo};
+  },
+});
+
 var mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     checkHidingSpotForTreasure: CheckHidingSpotForTreasureMutation,
+    login: LoginMutation,
   }),
 });
 
