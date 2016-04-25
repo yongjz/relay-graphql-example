@@ -1,6 +1,7 @@
 import React from 'react';
 import Relay from 'react-relay';
 import CheckHidingSpotForTreasureMutation from '../mutations/CheckHidingSpotForTreasureMutation';
+import Login from './Login';
 
 class App extends React.Component {
   _getHidingSpotStyle(hidingSpot) {
@@ -56,6 +57,7 @@ class App extends React.Component {
     });
   }
   render() {
+    console.log(this.props.user);
     var headerText;
     if (this.props.relay.getPendingTransactions(this.props.game)) {
       headerText = '\u2026';
@@ -68,6 +70,7 @@ class App extends React.Component {
     }
     return (
       <div>
+        <Login />
         <h1>{headerText}</h1>
         {this.renderGameBoard()}
         <p>Turns remaining: {this.props.game.turnsRemaining}</p>

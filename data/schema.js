@@ -1,12 +1,3 @@
-// /**
-//  *  Copyright (c) 2015, Facebook, Inc.
-//  *  All rights reserved.
-//  *
-//  *  This source code is licensed under the BSD-style license found in the
-//  *  LICENSE file in the root directory of this source tree. An additional grant
-//  *  of patent rights can be found in the PATENTS file in the same directory.
-//  */
-//
 import {
   GraphQLBoolean,
   GraphQLFloat,
@@ -38,6 +29,8 @@ import {
   getHidingSpots,
   getTurnsRemaining,
   login,
+  getUser,
+  getUserByCredentials
 } from './database';
 
 var {nodeInterface, nodeField} = nodeDefinitions(
@@ -47,6 +40,8 @@ var {nodeInterface, nodeField} = nodeDefinitions(
       return getGame(id);
     } else if (type === 'HidingSpot') {
       return getHidingSpot(id);
+    } if (type === 'User') {
+      return getUser();
     } else {
       return null;
     }
@@ -56,30 +51,52 @@ var {nodeInterface, nodeField} = nodeDefinitions(
       return gameType;
     } else if (obj instanceof HidingSpot) {
       return hidingSpotType;
+    } else if (obj instanceof User) {
+      return userType;
     } else {
       return null;
     }
   }
 );
 
-var loginType = new GraphQLObjectType({
-  name: 'Login',
-  description: 'User login',
-  fields: () => ({
-    id: globalIdField('Login'),
-    isLogin: {
-      type: GraphQLBoolean,
-      description: 'is user login?',
-      resolve: (userInfo) => userInfo.isLogin,
+var userType = new GraphQLObjectType({
+  name: 'User',
+  fields: {
+    id: globalIdField('User'),
+    //this field is useless you can do fromGlobalID(id)
+    userID: {
+      type: GraphQLString,
+      description: 'the database user\'s id',
     },
     username: {
       type: GraphQLString,
-      description: 'user name',
-      resolve: (userInfo) => userInfo.username,
-    }
-  }),
-  interfaces: [nodeInterface],
+      description: 'the name of the user',
+    },
+    mail: {
+      type: GraphQLString,
+      description: 'the mail of the user',
+    },
+  },
 });
+
+// var loginType = new GraphQLObjectType({
+//   name: 'Login',
+//   description: 'User login',
+//   fields: () => ({
+//     id: globalIdField('Login'),
+//     isLogin: {
+//       type: GraphQLBoolean,
+//       description: 'is user login?',
+//       resolve: (user) => user.isLogin,
+//     },
+//     username: {
+//       type: GraphQLString,
+//       description: 'user name',
+//       resolve: (user) => user.username,
+//     }
+//   }),
+//   interfaces: [nodeInterface],
+// });
 
 var gameType = new GraphQLObjectType({
   name: 'Game',
@@ -142,6 +159,10 @@ var queryType = new GraphQLObjectType({
       type: gameType,
       resolve: () => getGame(),
     },
+    user: {
+      type: userType,
+      resolve: () => getUser(),
+    }
   }),
 });
 
@@ -167,6 +188,33 @@ var CheckHidingSpotForTreasureMutation = mutationWithClientMutationId({
   },
 });
 
+// var LoginMutation = mutationWithClientMutationId({
+//   name: 'CheckLogin',
+//   inputFields: {
+//     username: {
+//       type: new GraphQLNonNull(GraphQLString)
+//     },
+//     password: {
+//       type: new GraphQLNonNull(GraphQLString)
+//     }
+//   },
+//   outputFields: {
+//     // user通过resolve方法得到数据，然后把数据传递给loginType，对应的loginType通过user使用数据
+//     user: {
+//       type: loginType,
+//       resolve: (userInfo) => userInfo,
+//     }
+//   },
+//   mutateAndGetPayload: ({username, password}) => {
+//     console.log(username);
+//     console.log(password);
+//     var userInfo = login(username, password);
+//     console.log(userInfo);
+//     //此处返回数据后，outputFields即可得到返回的数据，通过返回数据的名称直接使用
+//     return userInfo;
+//   },
+// });
+
 var LoginMutation = mutationWithClientMutationId({
   name: 'Login',
   inputFields: {
@@ -175,26 +223,29 @@ var LoginMutation = mutationWithClientMutationId({
     },
     password: {
       type: new GraphQLNonNull(GraphQLString)
+    },
+    id: {
+      type: new GraphQLNonNull(GraphQLString)
     }
   },
   outputFields: {
-    userInfo: {
-      type: loginType,
-    },
+    user: {
+      type: userType,
+      resolve: (newUser) => newUser
+    }
   },
   mutateAndGetPayload: (credentials) => {
-    console.log(credentials);
-    var userInfo = login(credentials.username, credentials.password);
-    console.log(userInfo);
-    return {userInfo};
-  },
+    console.log('schema:loginmutation', credentials);
+    var newUser = getUserByCredentials(credentials);
+    return newUser;
+  }
 });
 
 var mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     checkHidingSpotForTreasure: CheckHidingSpotForTreasureMutation,
-    login: LoginMutation,
+    loginMutation: LoginMutation,
   }),
 });
 

@@ -4,6 +4,8 @@ export class HidingSpot {}
 var game = new Game();
 game.id = '1';
 
+const logID = 'qldfjbe2434RZRFeerg';
+
 var hidingSpots = [];
 (function() {
   var hidingSpot;
@@ -47,13 +49,47 @@ export function getTurnsRemaining() {
 }
 
 export class User {}
+
 export function login(username, password) {
-  var user = new User();
   user.isLogin = false;
   user.username = 'guest';
-  if(username === 'admin' && password === '123456') {
+  if (username === 'admin' && password === '123456') {
     user.isLogin = true;
     user.username = 'admin'
   }
+  return user;
+}
+
+export function getUser() {
+  console.log("exec getUser");
+  return {
+    username: '',
+    mail: '',
+    userID: '',
+    id: logID
+  };
+}
+
+export function getUserByCredentials(credentials, rootValue) {
+  if (credentials.username === '') {
+    // rootValue.cookies.set('userID', '');
+    return {
+      username: '',
+      mail: '',
+      userID: '',
+      id: logID
+    };
+  }
+
+  if (credentials.username === 'admin' && credentials.password === '123456') {
+    var user = {
+      name: 'admin',
+      mail: 'admin@admin.com',
+      userID: '1',
+      id: logID,
+    };
+  }
+  // rootValue.cookies.set('userID', user.userID);
+  console.log('database:getUserByCredentials:', user);
   return user;
 }

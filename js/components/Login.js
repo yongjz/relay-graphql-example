@@ -1,7 +1,8 @@
 import React from 'react';
 import Relay from 'react-relay';
+import LoginMutation from '../mutations/LoginMutation';
 
-export default class Login extends React.Component {
+class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,19 +17,40 @@ export default class Login extends React.Component {
     this.setState(object);
   }
 
-  _handleLogin() {
-    if(this.state.username === 'admin' && this.state.password === '123456') {
-      alert('login success');
-    }
+  _handleLogin = (e) => {
+    e.preventDefault();
+    var details = {
+      username: this.refs.usernameInput.value,
+      password: this.refs.passwordInput.value,
+    };
+    Relay.Store.commitUpdate(
+      new LoginMutation({credentials: details})
+    );
+    this.refs.usernameInput.value = '';
+    this.refs.passwordInput.value = '';
   }
 
   render() {
     return (
       <div>
-        <input type="text" onChange={this.setValue.bind(this, 'username')}/>
-        <input type="password" onChange={this.setValue.bind(this, 'password')}/>
-        <input type="button" value="login" onClick={this._handleLogin.bind(this)}/>
+        <input type="text" placeholder="input username" ref="usernameInput" onChange={this.setValue.bind(this, 'username')}/>
+        <input type="password" placeholder="input password" ref="passwordInput" onChange={this.setValue.bind(this, 'password')}/>
+        <input type="button" value="login" onClick={this._handleLogin}/>
       </div>
     );
   }
 }
+
+export default Relay.createContainer(Login, {
+  fragments: {
+    user: () => Relay.QL`
+    fragment on User {
+      id,
+      userID,
+      mail,
+      username,
+      ${LoginMutation.getFragment('user')}
+    }
+    `
+  }
+});
