@@ -2,7 +2,7 @@ import React from 'react';
 import Relay from 'react-relay';
 import LoginMutation from '../mutations/LoginMutation';
 
-class Login extends React.Component {
+export class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

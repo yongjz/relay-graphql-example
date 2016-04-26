@@ -22,8 +22,11 @@
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
     "react-relay": "^0.8.0",
+    "react-router": "^2.3.0",
+    "react-router-relay": "^0.12.2",
     "webpack": "^1.13.0",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "webpack-hot-middleware": "^2.10.0"
   },
   "devDependencies": {
     "babel-cli": "^6.7.7"
