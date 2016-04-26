@@ -27,11 +27,10 @@ ReactDOM.render(
     <Route
       path="/" component={App}
       queries={GameQueries}
-    >
-      <Route
-        path="login" component={Login}
-      />
-    </Route>
+    />
+    <Route
+      path="login" component={Login}
+    />
   </Router>,
   document.getElementById('root')
 );
