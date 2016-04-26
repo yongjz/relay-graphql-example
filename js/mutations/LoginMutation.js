@@ -19,7 +19,7 @@ export default class LoginMutation extends Relay.Mutation {
     return {
       username: this.props.credentials.username,
       password: this.props.credentials.password,
-      id: 'qldfjbe2434RZRFeerg'
+      id: this.props.user.id
     };
   }
 
@@ -27,7 +27,7 @@ export default class LoginMutation extends Relay.Mutation {
     return [{
       type: 'FIELDS_CHANGE',
       fieldIDs: {
-        user: 'qldfjbe2434RZRFeerg',
+        user: this.props.user.id,
       }
     }];
   }

@@ -24,18 +24,22 @@ export class Login extends React.Component {
       password: this.refs.passwordInput.value,
     };
     Relay.Store.commitUpdate(
-      new LoginMutation({credentials: details})
+      new LoginMutation({credentials: details, user: this.props.user})
     );
     this.refs.usernameInput.value = '';
     this.refs.passwordInput.value = '';
   }
 
   render() {
+    const {username} = this.props.user;
+    var loginInfo = username ? <p>username: { username }</p>
+      : <p>not login</p>
     return (
       <div>
         <input type="text" placeholder="input username" ref="usernameInput" onChange={this.setValue.bind(this, 'username')}/>
         <input type="password" placeholder="input password" ref="passwordInput" onChange={this.setValue.bind(this, 'password')}/>
         <input type="button" value="login" onClick={this._handleLogin}/>
+        {loginInfo}
       </div>
     );
   }

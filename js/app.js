@@ -14,6 +14,10 @@ const GameQueries = {
   game: () => Relay.QL`query { game }`
 };
 
+const LoginQueries = {
+  user: () => Relay.QL`query { user }`
+};
+
 ReactDOM.render(
   // <Relay.RootContainer
   //   Component={App}
@@ -30,6 +34,7 @@ ReactDOM.render(
     />
     <Route
       path="login" component={Login}
+      queries={LoginQueries}
     />
   </Router>,
   document.getElementById('root')

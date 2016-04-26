@@ -83,7 +83,7 @@ export function getUserByCredentials(credentials, rootValue) {
 
   if (credentials.username === 'admin' && credentials.password === '123456') {
     var user = {
-      name: 'admin',
+      username: 'admin',
       mail: 'admin@admin.com',
       userID: '1',
       id: logID,
