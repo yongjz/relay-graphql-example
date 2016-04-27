@@ -30,7 +30,8 @@ import {
   getTurnsRemaining,
   login,
   getUser,
-  getUserByCredentials
+  getUserByCredentials,
+  addUser,
 } from './database';
 
 var {nodeInterface, nodeField} = nodeDefinitions(
@@ -241,11 +242,41 @@ var LoginMutation = mutationWithClientMutationId({
   }
 });
 
+export var SignupMutation = mutationWithClientMutationId({
+  name: 'Signup',
+  inputFields: {
+    username: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    mail: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    password: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    id: {
+      type: new GraphQLNonNull(GraphQLID)
+    }
+  },
+  outputFields: {
+    user: {
+      type: userType,
+      resolve: (newUser) => newUser
+    }
+  },
+  mutateAndGetPayload: (credentials) => {
+    var newUser = addUser(credentials);
+    console.log('mutation:signup', newUser);
+    return newUser;
+  }
+});
+
 var mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     checkHidingSpotForTreasure: CheckHidingSpotForTreasureMutation,
     loginMutation: LoginMutation,
+    signupMutation: SignupMutation,
   }),
 });
 

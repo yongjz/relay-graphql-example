@@ -2,6 +2,7 @@ import 'babel-polyfill';
 
 import App from './components/App';
 import Login from './components/Login';
+import Signup from './components/Signup';
 import AppHomeRoute from './routes/AppHomeRoute';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -14,7 +15,7 @@ const GameQueries = {
   game: () => Relay.QL`query { game }`
 };
 
-const LoginQueries = {
+const UserQueries = {
   user: () => Relay.QL`query { user }`
 };
 
@@ -34,7 +35,11 @@ ReactDOM.render(
     />
     <Route
       path="login" component={Login}
-      queries={LoginQueries}
+      queries={UserQueries}
+    />
+    <Route
+      path="signup" component={Signup}
+      queries={UserQueries}
     />
   </Router>,
   document.getElementById('root')

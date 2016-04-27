@@ -49,6 +49,12 @@ export function getTurnsRemaining() {
 }
 
 export class User {}
+var users = [];
+var user = new User();
+user.username = '';
+user.mail = '';
+user.userID = '';
+user.id = logID;
 
 export function login(username, password) {
   user.isLogin = false;
@@ -62,12 +68,7 @@ export function login(username, password) {
 
 export function getUser() {
   console.log("exec getUser");
-  return {
-    username: '',
-    mail: '',
-    userID: '',
-    id: logID
-  };
+  return user;
 }
 
 export function getUserByCredentials(credentials, rootValue) {
@@ -82,14 +83,31 @@ export function getUserByCredentials(credentials, rootValue) {
   }
 
   if (credentials.username === 'admin' && credentials.password === '123456') {
-    var user = {
-      username: 'admin',
-      mail: 'admin@admin.com',
-      userID: '1',
-      id: logID,
-    };
+    user.username = 'admin';
+    user.mail = 'admin@admin.com';
+    user.userID = '1';
+    user.id = logID;
+  } else {
+    user.username = '';
+    user.mail = '';
+    user.userID = '';
+    user.id = logID;
   }
   // rootValue.cookies.set('userID', user.userID);
   console.log('database:getUserByCredentials:', user);
   return user;
+}
+
+export function addUser(credentials) {
+  console.log('exec addUser');
+  var newUser = new User();
+  newUser.userID = users.length + 1;
+  newUser.username = credentials.username;
+  newUser.mail = credentials.mail;
+  newUser.password = credentials.password;
+  newUser.id = logID;
+  users.push(newUser);
+  console.log(users);
+  user = newUser;
+  return newUser;
 }
