@@ -34,6 +34,9 @@ import {
   addUser,
 } from './database';
 
+var models  = require('../models');
+var User    = models.User;
+
 var {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     var {type, id} = fromGlobalId(globalId);
@@ -266,6 +269,12 @@ export var SignupMutation = mutationWithClientMutationId({
   },
   mutateAndGetPayload: (credentials) => {
     var newUser = addUser(credentials);
+    var userdb = new User(newUser);
+    userdb.save(function(err, user) {
+      if (err) {
+        console.log(err);
+      }
+    });
     console.log('mutation:signup', newUser);
     return newUser;
   }

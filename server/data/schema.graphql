@@ -1,0 +1,93 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+input CheckHidingSpotForTreasureInput {
+  id: ID!
+  clientMutationId: String!
+}
+
+type CheckHidingSpotForTreasurePayload {
+  hidingSpot: HidingSpot
+  game: Game
+  clientMutationId: String!
+}
+
+type Game implements Node {
+  id: ID!
+  hidingSpots(after: String, first: Int, before: String, last: Int): HidingSpotConnection
+  turnsRemaining: Int
+}
+
+type HidingSpot implements Node {
+  id: ID!
+  hasBeenChecked: Boolean
+  hasTreasure: Boolean
+  testField: Int
+}
+
+type HidingSpotConnection {
+  pageInfo: PageInfo!
+  edges: [HidingSpotEdge]
+}
+
+type HidingSpotEdge {
+  node: HidingSpot
+  cursor: String!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+  id: String!
+  clientMutationId: String!
+}
+
+type LoginPayload {
+  user: User
+  clientMutationId: String!
+}
+
+type Mutation {
+  checkHidingSpotForTreasure(input: CheckHidingSpotForTreasureInput!): CheckHidingSpotForTreasurePayload
+  loginMutation(input: LoginInput!): LoginPayload
+  signupMutation(input: SignupInput!): SignupPayload
+}
+
+interface Node {
+  id: ID!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Query {
+  node(id: ID!): Node
+  game: Game
+  user: User
+}
+
+input SignupInput {
+  username: String!
+  mail: String!
+  password: String!
+  id: ID!
+  clientMutationId: String!
+}
+
+type SignupPayload {
+  user: User
+  clientMutationId: String!
+}
+
+type User {
+  id: ID!
+  userID: String
+  username: String
+  mail: String
+}

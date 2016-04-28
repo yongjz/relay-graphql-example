@@ -3,10 +3,13 @@ import graphQLHTTP from 'express-graphql';
 import path from 'path';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
-import {Schema} from './data/schema';
+import {Schema} from './server/data/schema';
+import mongoose from 'mongoose';
 
 const APP_PORT = 3000;
 const GRAPHQL_PORT = 8080;
+const DATABASE_URI = 'mongodb://localhost:27017/relay-graphql-example';
+
 
 // Expose a GraphQL endpoint
 var graphQLServer = express();
@@ -40,6 +43,9 @@ var app = new WebpackDevServer(compiler, {
   stats: {colors: true},
   historyApiFallback: true,
 });
+
+mongoose.connect(DATABASE_URI);
+
 // Serve static resources
 app.use('/', express.static(path.resolve(__dirname, 'public')));
 app.listen(APP_PORT, () => {
