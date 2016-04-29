@@ -34,9 +34,6 @@ import {
   addUser,
 } from './database';
 
-var models  = require('../models');
-var User    = models.User;
-
 var {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     var {type, id} = fromGlobalId(globalId);
@@ -71,10 +68,14 @@ var userType = new GraphQLObjectType({
     userID: {
       type: GraphQLString,
       description: 'the database user\'s id',
+      // resolve: (_, args, session) => {
+      //   console.log(session);
+      // }
     },
     username: {
       type: GraphQLString,
       description: 'the name of the user',
+      resolve: (_, args, session) => session.username
     },
     mail: {
       type: GraphQLString,
@@ -238,9 +239,11 @@ var LoginMutation = mutationWithClientMutationId({
       resolve: (newUser) => newUser
     }
   },
-  mutateAndGetPayload: (credentials) => {
+  mutateAndGetPayload: (credentials, session) => {
     console.log('schema:loginmutation', credentials);
     var newUser = getUserByCredentials(credentials);
+    session.username = newUser.username;
+    console.log(session);
     return newUser;
   }
 });
@@ -269,12 +272,6 @@ export var SignupMutation = mutationWithClientMutationId({
   },
   mutateAndGetPayload: (credentials) => {
     var newUser = addUser(credentials);
-    var userdb = new User(newUser);
-    userdb.save(function(err, user) {
-      if (err) {
-        console.log(err);
-      }
-    });
     console.log('mutation:signup', newUser);
     return newUser;
   }

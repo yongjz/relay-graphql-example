@@ -1,3 +1,6 @@
+import models from '../models';
+var UserDb = models.User;
+
 export class Game {}
 export class HidingSpot {}
 
@@ -109,5 +112,11 @@ export function addUser(credentials) {
   users.push(newUser);
   console.log(users);
   user = newUser;
+  var userdb = new UserDb(newUser);
+  userdb.save(function(err, user) {
+    if (err) {
+      console.log(err);
+    }
+  });
   return newUser;
 }

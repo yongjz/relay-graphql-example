@@ -17,6 +17,7 @@
     "classnames": "^2.2.3",
     "express": "^4.13.4",
     "express-graphql": "^0.5.1",
+    "express-session": "^1.13.0",
     "graphql": "^0.5.0",
     "graphql-relay": "^0.4.1",
     "mongoose": "^4.4.13",
