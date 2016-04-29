@@ -75,7 +75,10 @@ var userType = new GraphQLObjectType({
     username: {
       type: GraphQLString,
       description: 'the name of the user',
-      resolve: (_, args, session) => session.username
+      resolve: (_, args, session) => {
+        console.log(session);
+        return session.username;
+      }
     },
     mail: {
       type: GraphQLString,
@@ -243,7 +246,7 @@ var LoginMutation = mutationWithClientMutationId({
     console.log('schema:loginmutation', credentials);
     var newUser = getUserByCredentials(credentials);
     session.username = newUser.username;
-    console.log(session);
+    // console.log(session);
     return newUser;
   }
 });
