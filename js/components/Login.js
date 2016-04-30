@@ -32,14 +32,20 @@ export class Login extends React.Component {
 
   render() {
     const {username} = this.props.user;
-    var loginInfo = username ? <p>username: { username }</p>
-      : <p>not login</p>
-    return (
+    var loginInfo = username ?
+      <div>
+        <p>username: { username }</p>
+        <input type="button" value="logout" />
+      </div> :
       <div>
         <input type="text" placeholder="input username" ref="usernameInput" onChange={this.setValue.bind(this, 'username')}/>
         <input type="password" placeholder="input password" ref="passwordInput" onChange={this.setValue.bind(this, 'password')}/>
         <input type="button" value="login" onClick={this._handleLogin}/>
-        {loginInfo}
+        <p>not login</p>
+      </div>
+    return (
+      <div>
+        { loginInfo }
       </div>
     );
   }

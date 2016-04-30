@@ -243,10 +243,11 @@ var LoginMutation = mutationWithClientMutationId({
     }
   },
   mutateAndGetPayload: (credentials, session) => {
-    console.log('schema:loginmutation', credentials);
-    var newUser = getUserByCredentials(credentials);
-    session.username = newUser.username;
+    // console.log('schema:loginmutation', credentials);
     // console.log(session);
+    var newUser = getUserByCredentials(credentials);
+    // console.log('database:getUserByCredentials:', newUser);
+    session.username = newUser.username;
     return newUser;
   }
 });

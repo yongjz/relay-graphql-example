@@ -60,13 +60,36 @@ user.userID = '';
 user.id = logID;
 
 export function login(username, password) {
-  user.isLogin = false;
-  user.username = 'guest';
-  if (username === 'admin' && password === '123456') {
-    user.isLogin = true;
-    user.username = 'admin'
-  }
-  return user;
+  UserDb.findOne({username: username}, function(err, userdb) {
+    if (err) {
+      console.log(err);
+    }
+    if (!userdb) {
+      return {
+        username: '',
+        mail: '',
+        userID: '',
+      };
+    }
+
+    if (password === userdb.password) {
+      console.log('login success');
+      return userdb;
+    } else {
+      return {
+        username: '',
+        mail: '',
+        userID: '',
+      };
+    }
+  });
+  // user.isLogin = false;
+  // user.username = 'guest';
+  // if (username === 'admin' && password === '123456') {
+  //   user.isLogin = true;
+  //   user.username = 'admin'
+  // }
+  // return user;
 }
 
 export function getUser() {
@@ -85,20 +108,49 @@ export function getUserByCredentials(credentials, rootValue) {
     };
   }
 
-  if (credentials.username === 'admin' && credentials.password === '123456') {
-    user.username = 'admin';
-    user.mail = 'admin@admin.com';
-    user.userID = '1';
-    user.id = logID;
-  } else {
-    user.username = '';
-    user.mail = '';
-    user.userID = '';
-    user.id = logID;
-  }
+  UserDb.findOne({username: credentials.username}, function(err, userdb) {
+    if (err) {
+      console.log(err);
+    }
+    if (!userdb) {
+      return {
+        username: '',
+        mail: '',
+        userID: '',
+      };
+    }
+
+    if (credentials.password === userdb.password) {
+      console.log('login success');
+      console.log(userdb);
+      return {
+        username: userdb.username,
+        mail: userdb.mail,
+        userID: userdb._id,
+      };
+    } else {
+      return {
+        username: '',
+        mail: '',
+        userID: '',
+      };
+    }
+  });
+
+  // if (credentials.username === 'admin' && credentials.password === '123456') {
+  //   user.username = 'admin';
+  //   user.mail = 'admin@admin.com';
+  //   user.userID = '1';
+  //   user.id = logID;
+  // } else {
+  //   user.username = '';
+  //   user.mail = '';
+  //   user.userID = '';
+  //   user.id = logID;
+  // }
   // rootValue.cookies.set('userID', user.userID);
-  console.log('database:getUserByCredentials:', user);
-  return user;
+  // console.log('database:getUserByCredentials:', user);
+  // return user;
 }
 
 export function addUser(credentials) {
