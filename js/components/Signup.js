@@ -31,10 +31,12 @@ export class Signup extends React.Component {
     this.refs.usernameInput.value = '';
     this.refs.mailInput.value = '';
     this.refs.passwordInput.value = '';
+    this.refs.passwordConfirmInput.value = '';
   }
 
   render() {
     const {username} = this.props.user;
+    console.log(username);
     var signupInfo = username ? <p>signup success, username: { username }</p>
       : <p>signup fail</p>
     return (

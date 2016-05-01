@@ -28,11 +28,13 @@ import {
   getHidingSpot,
   getHidingSpots,
   getTurnsRemaining,
-  login,
   getUser,
   getUserByCredentials,
   addUser,
 } from './database';
+
+import models from '../models';
+var UserDb = models.User;
 
 var {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
@@ -68,21 +70,40 @@ var userType = new GraphQLObjectType({
     userID: {
       type: GraphQLString,
       description: 'the database user\'s id',
+      // resolve: (user) => user.userID
       // resolve: (_, args, session) => {
-      //   console.log(session);
+      //   // console.log(session);
+      //   if(session.user) {
+      //     return session.user._id;
+      //   } else {
+      //     return '';
+      //   }
       // }
     },
     username: {
       type: GraphQLString,
       description: 'the name of the user',
-      resolve: (_, args, session) => {
-        console.log(session);
-        return session.username;
-      }
+      // resolve: (user) => user.username
+      // resolve: (_, args, session) => {
+      //   // console.log(session);
+      //   if(session.user) {
+      //     return session.user.username;
+      //   } else {
+      //     return '';
+      //   }
+      // }
     },
     mail: {
       type: GraphQLString,
       description: 'the mail of the user',
+      // resolve: (user) => user.mail
+      // resolve: (_, args, session) => {
+      //   if(session.user) {
+      //     return session.user.mail;
+      //   } else {
+      //     return '';
+      //   }
+      // }
     },
   },
 });
@@ -169,7 +190,7 @@ var queryType = new GraphQLObjectType({
     },
     user: {
       type: userType,
-      resolve: () => getUser(),
+      resolve: (_, args, session) => getUser(_, args, session),
     }
   }),
 });
@@ -243,12 +264,41 @@ var LoginMutation = mutationWithClientMutationId({
     }
   },
   mutateAndGetPayload: (credentials, session) => {
-    // console.log('schema:loginmutation', credentials);
-    // console.log(session);
-    var newUser = getUserByCredentials(credentials);
-    // console.log('database:getUserByCredentials:', newUser);
-    session.username = newUser.username;
-    return newUser;
+    return new Promise((resolve, reject) => {
+      UserDb.findOne({username: credentials.username}, function(err, userdb) {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        var res = {
+          username: '',
+          mail: '',
+          userID: '',
+        };
+        if (!userdb) {
+          resolve({
+            username: '',
+            mail: '',
+            userID: '',
+          });
+        }
+        if (credentials.password === userdb.password) {
+          console.log('login success');
+          session.user = userdb;
+          resolve({
+            username: userdb.username,
+            mail: userdb.mail,
+            userID: userdb._id,
+          });
+        } else {
+          resolve({
+            username: '',
+            mail: '',
+            userID: '',
+          });
+        }
+      });
+    })
   }
 });
 
@@ -274,10 +324,25 @@ export var SignupMutation = mutationWithClientMutationId({
       resolve: (newUser) => newUser
     }
   },
-  mutateAndGetPayload: (credentials) => {
-    var newUser = addUser(credentials);
-    console.log('mutation:signup', newUser);
-    return newUser;
+  mutateAndGetPayload: (credentials, session) => {
+    return new Promise((resolve, reject) => {
+      var userdb = new UserDb();
+      userdb.username = credentials.username;
+      userdb.mail = credentials.mail;
+      userdb.password = credentials.password;
+      userdb.save(function(err, user) {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+        session.user = user;
+        resolve(user);
+        // return user;
+      });
+    });
+    // var newUser = addUser(credentials);
+    // console.log('mutation:signup', newUser);
+    // return newUser;
   }
 });
 

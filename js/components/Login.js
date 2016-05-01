@@ -6,6 +6,7 @@ export class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLogin: false,
       username: '',
       password: '',
     }
@@ -26,12 +27,18 @@ export class Login extends React.Component {
     Relay.Store.commitUpdate(
       new LoginMutation({credentials: details, user: this.props.user})
     );
+    // if (this.props.user.username) {
+    //   this.setState({
+    //     isLogin: true
+    //   })
+    // }
     this.refs.usernameInput.value = '';
     this.refs.passwordInput.value = '';
   }
 
   render() {
     const {username} = this.props.user;
+    console.log(username);
     var loginInfo = username ?
       <div>
         <p>username: { username }</p>

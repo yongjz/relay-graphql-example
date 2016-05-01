@@ -51,14 +51,6 @@ export function getTurnsRemaining() {
   return turnsRemaining;
 }
 
-export class User {}
-var users = [];
-var user = new User();
-user.username = '';
-user.mail = '';
-user.userID = '';
-user.id = logID;
-
 export function login(username, password) {
   UserDb.findOne({username: username}, function(err, userdb) {
     if (err) {
@@ -92,9 +84,18 @@ export function login(username, password) {
   // return user;
 }
 
-export function getUser() {
+export function getUser(_, args, session) {
   console.log("exec getUser");
-  return user;
+  if(session.user) {
+    console.log('exec getUser session.user');
+    return session.user;
+  } else {
+    return {
+      username: '',
+      mail: '',
+      userID: '',
+    };
+  }
 }
 
 export function getUserByCredentials(credentials, rootValue) {
@@ -153,22 +154,28 @@ export function getUserByCredentials(credentials, rootValue) {
   // return user;
 }
 
-export function addUser(credentials) {
+export function addUser(credentials, session) {
   console.log('exec addUser');
-  var newUser = new User();
-  newUser.userID = users.length + 1;
-  newUser.username = credentials.username;
-  newUser.mail = credentials.mail;
-  newUser.password = credentials.password;
-  newUser.id = logID;
-  users.push(newUser);
-  console.log(users);
-  user = newUser;
-  var userdb = new UserDb(newUser);
+  var userdb = new UserDb();
+  //newUser.userID = users.length + 1;
+  userdb.username = credentials.username;
+  userdb.mail = credentials.mail;
+  userdb.password = credentials.password;
+  //newUser.id = logID;
+  // users.push(newUser);
+  // console.log(users);
+  // user = newUser;
   userdb.save(function(err, user) {
     if (err) {
       console.log(err);
+      return {
+        username: '',
+        mail: '',
+        userID: '',
+      }
     }
+    session.user = user;
+    console.log(session);
+    return user;
   });
-  return newUser;
 }
