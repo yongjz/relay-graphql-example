@@ -82,6 +82,7 @@ type Query {
   node(id: ID!): Node
   game: Game
   user: User
+  store: Store
 }
 
 input SignupInput {
@@ -95,6 +96,16 @@ input SignupInput {
 type SignupPayload {
   user: User
   clientMutationId: String!
+}
+
+type Store {
+  teas: [Tea]
+}
+
+type Tea {
+  tes_id: Int
+  name: String
+  steepingTime: Int
 }
 
 type User {

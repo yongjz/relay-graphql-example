@@ -180,6 +180,38 @@ var hidingSpotType = new GraphQLObjectType({
 var {connectionType: hidingSpotConnection} =
   connectionDefinitions({name: 'HidingSpot', nodeType: hidingSpotType});
 
+const TeasList = {
+  teas: [
+    {tes_id: 1, name: 'Earl Grey Blue Star', steepingTime: 5},
+    {tes_id: 2, name: 'Milk Oolong', steepingTime: 3},
+    {tes_id: 3, name: 'Gunpowder Golden Temple', steepingTime: 3},
+    {tes_id: 4, name: 'Assam Hatimara', steepingTime: 5},
+    {tes_id: 5, name: 'Bancha', steepingTime: 2},
+    {tes_id: 6, name: 'Ceylon New Vithanakande', steepingTime: 5},
+    {tes_id: 7, name: 'Golden Tip Yunnan', steepingTime: 5},
+    {tes_id: 8, name: 'Jasmine Phoenix Pearls', steepingTime: 3},
+    {tes_id: 9, name: 'Kenya Milima', steepingTime: 5},
+    {tes_id: 10, name: 'Pu Erh First Grade', steepingTime: 4},
+    {tes_id: 11, name: 'Sencha Makoto', steepingTime: 2},
+  ],
+};
+
+var TeaType = new GraphQLObjectType({
+  name: 'Tea',
+  fields: () => ({
+    tes_id: {type: GraphQLInt},
+    name: {type: GraphQLString},
+    steepingTime: {type: GraphQLInt},
+  }),
+});
+
+var StoreType = new GraphQLObjectType({
+  name: 'Store',
+  fields: () => ({
+    teas: {type: new GraphQLList(TeaType)},
+  }),
+});
+
 var queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
@@ -191,7 +223,11 @@ var queryType = new GraphQLObjectType({
     user: {
       type: userType,
       resolve: (_, args, session) => getUser(_, args, session),
-    }
+    },
+    store: {
+      type: StoreType,
+      resolve: () => TeasList,
+    },
   }),
 });
 
@@ -339,8 +375,16 @@ export var SignupMutation = mutationWithClientMutationId({
           console.log(err);
           reject(err);
         }
-        session.user = user;
-        resolve(user);
+
+        // 返回的结果，需要和对应的type中的每个字段对应，否则会出现页面无法正确re－render的情况
+        var res = {
+          username: user.username,
+          mail: user.mail,
+          userID: user._id,
+        }
+
+        session.user = res;
+        resolve(res);
         // return user;
       });
     });
