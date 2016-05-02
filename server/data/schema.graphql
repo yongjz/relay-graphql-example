@@ -49,10 +49,22 @@ type LoginPayload {
   clientMutationId: String!
 }
 
+input LogoutInput {
+  username: String!
+  id: ID!
+  clientMutationId: String!
+}
+
+type LogoutPayload {
+  user: User
+  clientMutationId: String!
+}
+
 type Mutation {
   checkHidingSpotForTreasure(input: CheckHidingSpotForTreasureInput!): CheckHidingSpotForTreasurePayload
   loginMutation(input: LoginInput!): LoginPayload
   signupMutation(input: SignupInput!): SignupPayload
+  logoutMutation(input: LogoutInput!): LogoutPayload
 }
 
 interface Node {

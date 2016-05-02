@@ -5,6 +5,7 @@ export default class SignupMutation extends Relay.Mutation {
     user: () => Relay.QL`
       fragment on User {
         id,
+        userID,
         username,
         mail
       }
@@ -37,6 +38,7 @@ export default class SignupMutation extends Relay.Mutation {
     return Relay.QL`
     fragment on SignupPayload {
       user {
+        id
         userID,
         username,
         mail,

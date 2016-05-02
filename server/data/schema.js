@@ -70,7 +70,7 @@ var userType = new GraphQLObjectType({
     userID: {
       type: GraphQLString,
       description: 'the database user\'s id',
-      // resolve: (user) => user.userID
+      resolve: (user) => user.userID
       // resolve: (_, args, session) => {
       //   // console.log(session);
       //   if(session.user) {
@@ -83,7 +83,7 @@ var userType = new GraphQLObjectType({
     username: {
       type: GraphQLString,
       description: 'the name of the user',
-      // resolve: (user) => user.username
+      resolve: (user) => user.username
       // resolve: (_, args, session) => {
       //   // console.log(session);
       //   if(session.user) {
@@ -96,7 +96,7 @@ var userType = new GraphQLObjectType({
     mail: {
       type: GraphQLString,
       description: 'the mail of the user',
-      // resolve: (user) => user.mail
+      resolve: (user) => user.mail
       // resolve: (_, args, session) => {
       //   if(session.user) {
       //     return session.user.mail;
@@ -321,10 +321,14 @@ export var SignupMutation = mutationWithClientMutationId({
   outputFields: {
     user: {
       type: userType,
-      resolve: (newUser) => newUser
+      resolve: (newUser) => {
+        console.log(newUser);
+        return newUser;
+      }
     }
   },
   mutateAndGetPayload: (credentials, session) => {
+    console.log(credentials);
     return new Promise((resolve, reject) => {
       var userdb = new UserDb();
       userdb.username = credentials.username;
@@ -346,12 +350,43 @@ export var SignupMutation = mutationWithClientMutationId({
   }
 });
 
+export var LogoutMutation = mutationWithClientMutationId({
+  name: 'Logout',
+  inputFields: {
+    username: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    id: {
+      type: new GraphQLNonNull(GraphQLID)
+    }
+  },
+  outputFields: {
+    user: {
+      type: userType,
+      resolve: (newUser) => {
+        console.log(newUser);
+        return newUser;
+      }
+    }
+  },
+  mutateAndGetPayload: (credentials, session) => {
+    console.log(credentials);
+    session.destroy();
+    return {
+      username: '',
+      mail: '',
+      userID: '',
+    };
+  }
+});
+
 var mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     checkHidingSpotForTreasure: CheckHidingSpotForTreasureMutation,
     loginMutation: LoginMutation,
     signupMutation: SignupMutation,
+    logoutMutation: LogoutMutation,
   }),
 });
 

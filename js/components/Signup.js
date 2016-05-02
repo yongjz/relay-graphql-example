@@ -35,7 +35,7 @@ export class Signup extends React.Component {
   }
 
   render() {
-    const {username} = this.props.user;
+    var {username} = this.props.user;
     console.log(username);
     var signupInfo = username ? <p>signup success, username: { username }</p>
       : <p>signup fail</p>

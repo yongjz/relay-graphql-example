@@ -1,6 +1,6 @@
 import Relay from 'react-relay';
 
-export default class LoginMutation extends Relay.Mutation {
+export default class LogoutMutation extends Relay.Mutation {
   static fragments = {
     user: () => Relay.QL`
       fragment on User {
@@ -13,13 +13,12 @@ export default class LoginMutation extends Relay.Mutation {
   };
 
   getMutation() {
-    return Relay.QL `mutation{loginMutation}`;
+    return Relay.QL `mutation{logoutMutation}`;
   }
 
   getVariables() {
     return {
       username: this.props.credentials.username,
-      password: this.props.credentials.password,
       id: this.props.user.id
     };
   }
@@ -35,7 +34,7 @@ export default class LoginMutation extends Relay.Mutation {
 
   getFatQuery() {
     return Relay.QL`
-    fragment on LoginPayload {
+    fragment on LogoutPayload {
       user {
         id
         userID,
