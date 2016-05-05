@@ -4,6 +4,7 @@ import App from './components/App';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import List from './components/List';
+import MyEditor from './components/MyEditor';
 import AppHomeRoute from './routes/AppHomeRoute';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -49,6 +50,9 @@ ReactDOM.render(
     <Route
       path="tea" component={List}
       queries={TeasQueries}
+    />
+    <Route
+      path="editor" component={MyEditor}
     />
   </Router>,
   document.getElementById('root')
