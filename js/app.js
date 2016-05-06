@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import List from './components/List';
 import MyEditor from './components/MyEditor';
+import MediaEditor from './components/MediaEditor';
 import AppHomeRoute from './routes/AppHomeRoute';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -53,6 +54,9 @@ ReactDOM.render(
     />
     <Route
       path="editor" component={MyEditor}
+    />
+    <Route
+      path="media" component={MediaEditor}
     />
   </Router>,
   document.getElementById('root')
