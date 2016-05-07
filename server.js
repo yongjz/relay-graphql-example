@@ -2,6 +2,7 @@ import express from 'express';
 import session from 'express-session';
 import graphQLHTTP from 'express-graphql';
 import path from 'path';
+import passport from 'passport';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import {
@@ -24,6 +25,10 @@ graphQLServer.use(session({
     maxAge: 60000
   }
 }));
+
+// Passport
+graphQLServer.use(passport.initialize());
+graphQLServer.use(passport.session());
 
 graphQLServer.use('/', graphQLHTTP(request => ({
   schema: Schema,
